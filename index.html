@@ -9,29 +9,54 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;400;600;700&display=swap"
       rel="stylesheet"
     />
+    <script src="https://kit.fontawesome.com/ac736d8bde.js" crossorigin="anonymous"></script>
   </head>
   <body>
     <div class="container">
       <header>
-        <h1>Tic Tac Toe</h1>
+        <h2>Tic Tac Toe</h1>
       </header>
       <main class="gameboard">
-        <div class="menu">hello</div>
         <div class="grid"></div>
+        <div class="menu">
+          <p id="play-info"></p>
+          <div class="player-display">
+            <p class="player-name-display">Player 1</p>
+            <p class="player-score-display">0</p>
+          </div>
+          <div class="player-display">
+            <p class="player-name-display">Player 2</p>
+            <p class="player-score-display">0</p>
+          </div>
+        </div>
       </main>
     </div>
-    <button id="reset-button">Reset</button>
-    <form action="#">
-      <input
-        type="text"
-        class="player-name"
-        id="player1"
-        placeholder="Player 1"
-      />
-    </form>
+    <div id="overlay">
+      <h1 id="overlay-title" class="hidden">Tic Tac Toe</h1>
+      
+      <div id="buttons">
+        <button id="vs-player" class="button">vs Player <i class="fa-solid fa-user-group"></i></button>
+        <button id="vs-ai" class="button">vs AI <i class="fa-solid fa-robot"></i></button>
+      </div>
+      <form id="player-names">
+        <input
+          type="text"
+          class="player-name"
+          id="player1"
+          placeholder="Player 1"
+        />
+        <input
+          type="text"
+          class="player-name"
+          id="player2"
+          placeholder="Player 2"
+        />
+        <input id="play-button" class="button" type="submit" value="PLAY">
+      </form>
+    </div>
   </body>
   <script src="script.js"></script>
 </html>
