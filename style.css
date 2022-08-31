@@ -173,6 +173,7 @@ header h2 {
 }
 
 .player-name {
+  font-size: 1rem;
   border: none;
   width: 100%;
   letter-spacing: 2px;
@@ -205,6 +206,7 @@ header h2 {
   transition: background 0.2s;
   animation: fadein 1s linear;
   animation-fill-mode: forwards;
+  -webkit-appearance: none;
 }
 
 .button:hover {
