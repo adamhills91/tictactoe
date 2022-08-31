@@ -108,6 +108,13 @@ const displayController = (() => {
       gameOn = true;
     };
 
+    const stopGame = () => {
+      gameOn = false;
+      cells.forEach((item) => {
+        item.removeEventListener("click", makeMove);
+      });
+    };
+
     const playBtn = document.getElementById("play-button");
     playBtn.addEventListener("click", initialiseGame);
 
@@ -127,20 +134,20 @@ const displayController = (() => {
         winningCombinations.forEach((item) => {
           if (item.every((element) => crosses.includes(element))) {
             playInfo.textContent = `${player1.name} Wins!`;
-            gameOn = false;
+            stopGame();
           }
         });
       } else if (userSelection.textContent === player2.symbol) {
         noughts.push(parseInt(userSelection.dataset.cell));
-
         // Check if winningCombinations array contains current noughts combination
         winningCombinations.forEach((item) => {
           if (item.every((element) => noughts.includes(element))) {
             playInfo.textContent = `${player2.name} Wins!`;
-            gameOn = false;
+            stopGame();
           }
         });
       }
+      console.log(gameOn);
     };
     return { initialiseGame };
   }
