@@ -174,9 +174,11 @@ header h2 {
   font-size: 3rem;
   transition: background 0.2s, border 0.2s;
 }
-
-.cell:hover {
-  background: #d0d0d0;
+@media (hover: hover) {
+  /* when supported */
+  .cell:hover {
+    background: #d0d0d0;
+  }
 }
 
 .no-hover {
