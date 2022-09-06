@@ -38,11 +38,16 @@ const displayController = (() => {
     const playerNameDisplays = document.querySelectorAll(
       ".player-name-display"
     );
+    const playerScoreDisplays = document.querySelectorAll(
+      ".player-score-display"
+    );
     const playInfo = document.getElementById("play-info");
     let gameMode;
     let player1;
     let player2;
-    let activeUser;
+    let activePlayer = player1;
+    let player1Score = 0;
+    let player2Score = 0;
 
     vsPlayerBtn.addEventListener("click", () => {
       buttons.style.display = "none";
@@ -55,7 +60,8 @@ const displayController = (() => {
       clearOverlay();
       player1 = createPlayer(document.getElementById("player1").value, 1, "X");
       player2 = createPlayer(document.getElementById("player2").value, 2, "O");
-      setActivePlayer();
+      activePlayer = player1;
+      initialiseGame();
     });
 
     vsAIBtn.addEventListener("click", () => {
@@ -73,58 +79,65 @@ const displayController = (() => {
       }, 500);
     };
 
-    const setActivePlayer = () => {
-      activeUser = player1;
-      playerNameDisplays[0].textContent = player1.name;
-      playerNameDisplays[1].textContent = player2.name;
-      if (gameMode === "vs-player") {
-        playInfo.textContent = `${player1.name}'s Turn`;
-      } else if (gameMode === "vs-ai") {
-        playInfo.textContent = "Your Turn";
-      }
-    };
+    const setActivePlayer = () => {};
 
     let cells = document.querySelectorAll(".cell");
 
     const makeMove = function () {
       if (!this.textContent) {
         // update the board array
-        this.textContent = activeUser.symbol;
-        Gameboard.board[this.dataset.cell] = activeUser.symbol;
+        this.textContent = activePlayer.symbol;
+        Gameboard.board[this.dataset.cell] = activePlayer.symbol;
         switchUser();
         checkWinner(this);
       }
     };
 
     const initialiseGame = () => {
+      Gameboard.board = ["", "", "", "", "", "", "", "", ""];
       cells.forEach((item) => {
+        item.classList.remove("winning-combo");
+        item.classList.remove("no-hover");
         item.addEventListener("click", makeMove);
         item.textContent = "";
         Gameboard.board[item.dataset] === "";
       });
-      activeUser = player1;
       crosses = [];
       noughts = [];
       gameOn = true;
+      playInfo.style.display = "block";
+      replayButton.style.display = "none";
+      playerNameDisplays[0].textContent = player1.name;
+      playerNameDisplays[1].textContent = player2.name;
+      playerScoreDisplays[0].textContent = player1Score;
+      playerScoreDisplays[1].textContent = player2Score;
+      if (gameMode === "vs-player") {
+        playInfo.textContent = `${activePlayer.name}'s Turn`;
+      } else if (gameMode === "vs-ai") {
+        playInfo.textContent = "Your Turn";
+      }
     };
 
     const stopGame = () => {
       gameOn = false;
       cells.forEach((item) => {
         item.removeEventListener("click", makeMove);
+        item.classList.add("no-hover");
       });
+      playInfo.style.display = "none";
+      replayButton.style.display = "block";
     };
 
-    const playBtn = document.getElementById("play-button");
-    playBtn.addEventListener("click", initialiseGame);
+    const replayButton = document.getElementById("replay-button");
+    replayButton.addEventListener("click", initialiseGame);
 
     const switchUser = () => {
-      if (activeUser.number === 1) {
-        activeUser = player2;
+      if (activePlayer.number === 1) {
+        activePlayer = player2;
       } else {
-        activeUser = player1;
+        activePlayer = player1;
       }
-      playInfo.textContent = `${activeUser.name}'s Turn`;
+      playInfo.textContent = `${activePlayer.name}'s Turn`;
     };
 
     const checkWinner = (userSelection) => {
@@ -133,7 +146,14 @@ const displayController = (() => {
         // Check if winningCombinations array contains current crosses combination
         winningCombinations.forEach((item) => {
           if (item.every((element) => crosses.includes(element))) {
-            playInfo.textContent = `${player1.name} Wins!`;
+            for (let i = 0; i < item.length; i++) {
+              cells[item[i]].classList.add("winning-combo");
+            }
+
+            playInfo.style.display = "none";
+            replayButton.style.display = "block";
+            player1Score++;
+            playerScoreDisplays[0].textContent = player1Score;
             stopGame();
           }
         });
@@ -142,12 +162,20 @@ const displayController = (() => {
         // Check if winningCombinations array contains current noughts combination
         winningCombinations.forEach((item) => {
           if (item.every((element) => noughts.includes(element))) {
-            playInfo.textContent = `${player2.name} Wins!`;
+            for (let i = 0; i < item.length; i++) {
+              cells[item[i]].classList.add("winning-combo");
+            }
+            player2Score++;
+            playerScoreDisplays[1].textContent = player2Score;
             stopGame();
           }
         });
       }
-      console.log(gameOn);
+      if (Gameboard.board.every((e) => e === "X" || e === "O")) {
+        playInfo.style.display = "none";
+        replayButton.style.display = "block";
+        stopGame();
+      }
     };
     return { initialiseGame };
   }
