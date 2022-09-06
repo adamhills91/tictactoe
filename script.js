@@ -42,6 +42,7 @@ const displayController = (() => {
       ".player-score-display"
     );
     const playInfo = document.getElementById("play-info");
+    let cells = document.querySelectorAll(".cell");
     let gameMode;
     let player1;
     let player2;
@@ -55,6 +56,15 @@ const displayController = (() => {
       gameMode = "vs-player";
     });
 
+    vsAIBtn.addEventListener("click", () => {
+      clearOverlay();
+      gameMode = "vs-ai";
+      player1 = createPlayer("You", 1, "X");
+      player2 = createPlayer("Computer", 2, "O");
+      activePlayer = player1;
+      initialiseGame();
+    });
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       clearOverlay();
@@ -64,14 +74,6 @@ const displayController = (() => {
       initialiseGame();
     });
 
-    vsAIBtn.addEventListener("click", () => {
-      clearOverlay();
-      gameMode = "vs-ai";
-      player1 = createPlayer("You", 1, "X");
-      player2 = createPlayer("Computer", 2, "O");
-      setActivePlayer();
-    });
-
     const clearOverlay = () => {
       overlay.style.opacity = "0";
       setTimeout(() => {
@@ -79,17 +81,36 @@ const displayController = (() => {
       }, 500);
     };
 
-    const setActivePlayer = () => {};
-
-    let cells = document.querySelectorAll(".cell");
-
     const makeMove = function () {
       if (!this.textContent) {
         // update the board array
         this.textContent = activePlayer.symbol;
         Gameboard.board[this.dataset.cell] = activePlayer.symbol;
-        switchUser();
         checkWinner(this);
+        switchUser();
+        if (gameOn && gameMode === "vs-ai") {
+          computerMakeMove();
+        }
+      }
+    };
+
+    const computerMakeMove = () => {
+      let computerSelection = cells[Math.floor(Math.random() * cells.length)];
+      let computerTime = Math.floor(Math.random() * (1500 - 500) + 500);
+      cells.forEach((item) => {
+        item.removeEventListener("click", makeMove);
+      });
+      if (!computerSelection.textContent) {
+        setTimeout(() => {
+          computerSelection.textContent = activePlayer.symbol;
+          switchUser();
+          checkWinner(computerSelection);
+          cells.forEach((item) => {
+            item.addEventListener("click", makeMove);
+          });
+        }, computerTime);
+      } else {
+        computerMakeMove();
       }
     };
 
@@ -104,7 +125,6 @@ const displayController = (() => {
       });
       crosses = [];
       noughts = [];
-      gameOn = true;
       playInfo.style.display = "block";
       replayButton.style.display = "none";
       playerNameDisplays[0].textContent = player1.name;
@@ -113,9 +133,13 @@ const displayController = (() => {
       playerScoreDisplays[1].textContent = player2Score;
       if (gameMode === "vs-player") {
         playInfo.textContent = `${activePlayer.name}'s Turn`;
-      } else if (gameMode === "vs-ai") {
+      } else if (gameMode === "vs-ai" && activePlayer === player1) {
         playInfo.textContent = "Your Turn";
+      } else {
+        playInfo.textContent = "Computer's Turn";
+        computerMakeMove();
       }
+      gameOn = true;
     };
 
     const stopGame = () => {
@@ -132,45 +156,52 @@ const displayController = (() => {
     replayButton.addEventListener("click", initialiseGame);
 
     const switchUser = () => {
-      if (activePlayer.number === 1) {
+      console.log("current: " + activePlayer.name);
+      if (activePlayer === player1) {
         activePlayer = player2;
       } else {
         activePlayer = player1;
       }
-      playInfo.textContent = `${activePlayer.name}'s Turn`;
+      console.log("new: " + activePlayer.name);
+      if (gameMode === "vs-player") {
+        playInfo.textContent = `${activePlayer.name}'s Turn`;
+      } else {
+        if (activePlayer === player1) {
+          playInfo.textContent = "Your Turn";
+        } else {
+          playInfo.textContent = "Computer's Turn";
+        }
+      }
     };
 
     const checkWinner = (userSelection) => {
       if (userSelection.textContent === player1.symbol) {
         crosses.push(parseInt(userSelection.dataset.cell));
-        // Check if winningCombinations array contains current crosses combination
-        winningCombinations.forEach((item) => {
-          if (item.every((element) => crosses.includes(element))) {
-            for (let i = 0; i < item.length; i++) {
-              cells[item[i]].classList.add("winning-combo");
-            }
-
-            playInfo.style.display = "none";
-            replayButton.style.display = "block";
-            player1Score++;
-            playerScoreDisplays[0].textContent = player1Score;
-            stopGame();
-          }
-        });
       } else if (userSelection.textContent === player2.symbol) {
         noughts.push(parseInt(userSelection.dataset.cell));
-        // Check if winningCombinations array contains current noughts combination
-        winningCombinations.forEach((item) => {
-          if (item.every((element) => noughts.includes(element))) {
-            for (let i = 0; i < item.length; i++) {
-              cells[item[i]].classList.add("winning-combo");
+      }
+      // Check if winningCombinations array contains current noughts or crosses combination
+      winningCombinations.forEach((item) => {
+        if (
+          item.every((element) => crosses.includes(element)) ||
+          item.every((element) => noughts.includes(element))
+        ) {
+          for (let i = 0; i < item.length; i++) {
+            cells[item[i]].classList.add("winning-combo");
+          }
+          if (gameOn) {
+            if (activePlayer === player1) {
+              player1Score++;
+              playerScoreDisplays[0].textContent = player1Score;
+            } else {
+              player2Score++;
+              playerScoreDisplays[1].textContent = player2Score;
             }
-            player2Score++;
-            playerScoreDisplays[1].textContent = player2Score;
             stopGame();
           }
-        });
-      }
+        }
+      });
+      // Check for draw if board is full and no winner
       if (Gameboard.board.every((e) => e === "X" || e === "O")) {
         playInfo.style.display = "none";
         replayButton.style.display = "block";
