@@ -72,13 +72,13 @@ const displayController = (() => {
       player2 = createPlayer(document.getElementById("player2").value, 2, "O");
       activePlayer = player1;
       initialiseGame();
-      form.reset();
     });
 
     const clearOverlay = () => {
       overlay.style.opacity = "0";
       setTimeout(() => {
         overlay.style.display = "none";
+        form.reset();
       }, 500);
     };
 

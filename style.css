@@ -28,7 +28,7 @@ body {
 
 #overlay-title {
   opacity: 1;
-  font-size: 3rem;
+  font-size: 7rem;
   color: #238178;
   animation: fadein 1s;
   text-align: center;
@@ -220,7 +220,8 @@ header h2 {
 
 #buttons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: center;
   width: 100%;
   gap: 20px;
 }
@@ -228,6 +229,7 @@ header h2 {
 .button {
   opacity: 0;
   width: 100%;
+  max-width: 400px;
   background: #238178;
   color: white;
   font-weight: 600;
@@ -263,19 +265,25 @@ header h2 {
 .winning-combo:hover {
 }
 
-@media only screen and (min-width: 550px) {
+@media only screen and (max-width: 750px) {
   #buttons {
     flex-direction: row;
     justify-content: center;
   }
-  .button {
-    width: 50%;
-    max-width: 300px;
-  }
-}
-
-@media only screen and (min-width: 750px) {
   #overlay-title {
     font-size: 5rem;
+  }
+  .button {
+    /* width: 50%; */
+    /* max-width: 300px; */
+  }
+}
+@media only screen and (max-width: 550px) {
+  #overlay-title {
+    font-size: 3rem;
+  }
+  #buttons {
+    flex-direction: column;
+    align-items: center;
   }
 }
