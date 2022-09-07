@@ -201,10 +201,10 @@ header h2 {
 
 .reset-buttons {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 40px;
   width: 100%;
   max-width: 400px;
-  padding: 0 20px;
 }
 
 .reset-buttons h3 {
@@ -262,9 +262,6 @@ header h2 {
   border: 4px solid #238178;
 }
 
-.winning-combo:hover {
-}
-
 @media only screen and (max-width: 750px) {
   #buttons {
     flex-direction: row;
@@ -272,10 +269,6 @@ header h2 {
   }
   #overlay-title {
     font-size: 5rem;
-  }
-  .button {
-    /* width: 50%; */
-    /* max-width: 300px; */
   }
 }
 @media only screen and (max-width: 550px) {
@@ -285,5 +278,8 @@ header h2 {
   #buttons {
     flex-direction: column;
     align-items: center;
+  }
+  .reset-buttons h3 {
+    font-size: 0.9rem;
   }
 }
