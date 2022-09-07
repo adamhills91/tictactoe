@@ -72,6 +72,7 @@ const displayController = (() => {
       player2 = createPlayer(document.getElementById("player2").value, 2, "O");
       activePlayer = player1;
       initialiseGame();
+      form.reset();
     });
 
     const clearOverlay = () => {
@@ -179,7 +180,6 @@ const displayController = (() => {
       } else if (userSelection.textContent === player2.symbol) {
         noughts.push(parseInt(userSelection.dataset.cell));
       }
-      console.log(noughts);
       // Check if winningCombinations array contains current noughts or crosses combination
       winningCombinations.forEach((item) => {
         if (
@@ -206,6 +206,27 @@ const displayController = (() => {
         stopGame();
       }
     };
+
+    const resetScores = () => {
+      player1Score = 0;
+      player2Score = 0;
+      playerScoreDisplays[0].textContent = player1Score;
+      playerScoreDisplays[1].textContent = player1Score;
+    };
+
+    const resetScoresBtn = document.getElementById("reset-scores-btn");
+    resetScoresBtn.addEventListener("click", resetScores);
+
+    const chooseGameMode = () => {
+      overlay.style.display = "flex";
+      overlay.style.opacity = "1";
+      buttons.style.display = "flex";
+      form.style.display = "none";
+      resetScores();
+    };
+    const gameModeBtn = document.getElementById("game-mode-btn");
+    gameModeBtn.addEventListener("click", chooseGameMode);
+
     return { initialiseGame };
   }
 })();

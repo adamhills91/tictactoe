@@ -199,6 +199,25 @@ header h2 {
   outline: none;
 }
 
+.reset-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 400px;
+  padding: 0 20px;
+}
+
+.reset-buttons h3 {
+  font-weight: normal;
+  color: #238178;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.reset-buttons h3:hover {
+  opacity: 0.5;
+}
+
 #buttons {
   display: flex;
   flex-direction: column;
