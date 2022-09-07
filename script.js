@@ -103,8 +103,9 @@ const displayController = (() => {
       if (!computerSelection.textContent) {
         setTimeout(() => {
           computerSelection.textContent = activePlayer.symbol;
-          switchUser();
+          Gameboard.board[computerSelection.dataset.cell] = activePlayer.symbol;
           checkWinner(computerSelection);
+          switchUser();
           cells.forEach((item) => {
             item.addEventListener("click", makeMove);
           });
@@ -135,7 +136,7 @@ const displayController = (() => {
         playInfo.textContent = `${activePlayer.name}'s Turn`;
       } else if (gameMode === "vs-ai" && activePlayer === player1) {
         playInfo.textContent = "Your Turn";
-      } else {
+      } else if (gameMode === "vs-ai" && activePlayer === player2) {
         playInfo.textContent = "Computer's Turn";
         computerMakeMove();
       }
@@ -156,13 +157,11 @@ const displayController = (() => {
     replayButton.addEventListener("click", initialiseGame);
 
     const switchUser = () => {
-      console.log("current: " + activePlayer.name);
       if (activePlayer === player1) {
         activePlayer = player2;
       } else {
         activePlayer = player1;
       }
-      console.log("new: " + activePlayer.name);
       if (gameMode === "vs-player") {
         playInfo.textContent = `${activePlayer.name}'s Turn`;
       } else {
@@ -180,6 +179,7 @@ const displayController = (() => {
       } else if (userSelection.textContent === player2.symbol) {
         noughts.push(parseInt(userSelection.dataset.cell));
       }
+      console.log(noughts);
       // Check if winningCombinations array contains current noughts or crosses combination
       winningCombinations.forEach((item) => {
         if (
@@ -189,16 +189,14 @@ const displayController = (() => {
           for (let i = 0; i < item.length; i++) {
             cells[item[i]].classList.add("winning-combo");
           }
-          if (gameOn) {
-            if (activePlayer === player1) {
-              player1Score++;
-              playerScoreDisplays[0].textContent = player1Score;
-            } else {
-              player2Score++;
-              playerScoreDisplays[1].textContent = player2Score;
-            }
-            stopGame();
+          if (activePlayer === player1) {
+            player1Score++;
+            playerScoreDisplays[0].textContent = player1Score;
+          } else {
+            player2Score++;
+            playerScoreDisplays[1].textContent = player2Score;
           }
+          stopGame();
         }
       });
       // Check for draw if board is full and no winner
